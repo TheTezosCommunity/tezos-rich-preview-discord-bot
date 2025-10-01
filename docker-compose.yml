@@ -1,0 +1,37 @@
+version: "3.8"
+
+services:
+  discord-tezos-bot:
+    build: .
+    container_name: discord-tezos-previews
+    restart: unless-stopped
+    environment:
+      - NODE_ENV=production
+      - DISCORD_BOT_TOKEN=${DISCORD_BOT_TOKEN}
+      - DISCORD_CLIENT_ID=${DISCORD_CLIENT_ID}
+      - TZKT_API_BASE_URL=${TZKT_API_BASE_URL:-https://api.tzkt.io}
+      - OBJKT_API_BASE_URL=${OBJKT_API_BASE_URL:-https://data.objkt.com}
+      - API_RATE_LIMIT=${API_RATE_LIMIT:-60}
+      - LOG_LEVEL=${LOG_LEVEL:-info}
+    volumes:
+      - ./logs:/usr/src/app/logs
+    networks:
+      - discord-bot-network
+    healthcheck:
+      test: ["CMD", "bun", "run", "--version"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+networks:
+  discord-bot-network:
+    driver: bridge
+
+volumes:
+  logs:
