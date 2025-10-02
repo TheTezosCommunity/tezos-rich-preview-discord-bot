@@ -73,7 +73,7 @@ export class EmbedGeneratorService {
         // Set footer
         const iconUrl = this.getMarketplaceIcon(nft.marketplace.name);
         embed.setFooter({
-            text: `${nft.marketplace.name} • Tezos NFT Preview • a TTC tool`,
+            text: `${nft.marketplace.name} • Tezos NFT Preview • by TheTezosCommunity`,
             ...(iconUrl && { iconURL: iconUrl }),
         });
 
@@ -82,12 +82,24 @@ export class EmbedGeneratorService {
             embed.setURL(this.processMarketplaceUrl(nft.marketplace.url));
         }
 
-        // Add TTC Discord link as an additional field at the bottom
-        embed.addFields({
-            name: "\u200b", // Invisible character for spacing
-            value: "[Join TTC Discord](https://discord.gg/beq5pMzvDY)",
-            inline: false,
-        });
+        // Add TTC links as inline fields at the bottom
+        embed.addFields(
+            {
+                name: "\u200b", // Invisible character
+                value: "[Join TTC Discord](https://discord.gg/beq5pMzvDY)",
+                inline: true,
+            },
+            {
+                name: "\u200b", // Invisible character
+                value: "[The Tezos Community](https://thetezos.com)",
+                inline: true,
+            },
+            {
+                name: "\u200b", // Invisible character
+                value: "[Events Calendar](https://thetezos.com/calendar-view/)",
+                inline: true,
+            }
+        );
 
         return embed;
     }
@@ -221,7 +233,7 @@ export class EmbedGeneratorService {
         // Set footer
         const iconUrl = this.getMarketplaceIcon(collection.marketplace.name);
         embed.setFooter({
-            text: `${collection.marketplace.name} • Tezos Collection Preview • a TTC tool`,
+            text: `${collection.marketplace.name} • Tezos Collection Preview • by TheTezosCommunity`,
             ...(iconUrl && { iconURL: iconUrl }),
         });
 
@@ -230,12 +242,24 @@ export class EmbedGeneratorService {
             embed.setURL(this.processMarketplaceUrl(collection.marketplace.url));
         }
 
-        // Add TTC Discord link
-        embed.addFields({
-            name: "\u200b", // Invisible character for spacing
-            value: "[Join TTC Discord](https://discord.gg/beq5pMzvDY)",
-            inline: false,
-        });
+        // Add TTC links as inline fields
+        embed.addFields(
+            {
+                name: "\u200b", // Invisible character
+                value: "[Join TTC Discord](https://discord.gg/beq5pMzvDY)",
+                inline: true,
+            },
+            {
+                name: "\u200b", // Invisible character
+                value: "[The Tezos Community](https://thetezos.com)",
+                inline: true,
+            },
+            {
+                name: "\u200b", // Invisible character
+                value: "[Events Calendar](https://thetezos.com/calendar-view/)",
+                inline: true,
+            }
+        );
 
         return embed;
     }
