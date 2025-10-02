@@ -91,7 +91,7 @@ export class EmbedGeneratorService {
             },
             {
                 name: "\u200b", // Invisible character
-                value: "[The Tezos Community](https://thetezos.com)",
+                value: "[TTC Hub](https://thetezos.com)",
                 inline: true,
             },
             {
@@ -251,7 +251,7 @@ export class EmbedGeneratorService {
             },
             {
                 name: "\u200b", // Invisible character
-                value: "[The Tezos Community](https://thetezos.com)",
+                value: "[TTC Hub](https://thetezos.com)",
                 inline: true,
             },
             {
