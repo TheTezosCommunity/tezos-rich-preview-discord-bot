@@ -14,8 +14,29 @@ export class EmbedGeneratorService {
         tezos: 0x0066ff,
     };
 
+    // Discord embed limits
+    private limits = {
+        title: 256,
+        description: 4096,
+        fieldName: 256,
+        fieldValue: 1024,
+        footerText: 2048,
+        authorName: 256,
+        totalFields: 25,
+        totalCharacters: 6000,
+    };
+
     constructor(discordClient?: Client) {
         this.discordClient = discordClient;
+    }
+
+    /**
+     * Truncates text with ellipses if over limit
+     */
+    private truncateText(text: string, maxLength: number): string {
+        if (!text) return "";
+        if (text.length <= maxLength) return text;
+        return text.substring(0, maxLength - 3) + "...";
     }
 
     /**
@@ -24,15 +45,16 @@ export class EmbedGeneratorService {
     public createNFTEmbed(nft: TezosNFT): EmbedBuilder {
         const embed = new EmbedBuilder().setColor(this.colors.tezos as ColorResolvable).setTimestamp();
 
-        // Set title with collection if available
-        const title = nft.collection?.name ? `${nft.collection.name} - ${nft.name}` : nft.name || "Unknown NFT";
+        // Set title with collection if available - keep concise
+        let title = nft.name || "Unknown NFT";
+        if (nft.collection?.name && title.length < 150) {
+            title = `${nft.collection.name} - ${title}`;
+        }
+        embed.setTitle(this.truncateText(title, this.limits.title));
 
-        embed.setTitle(title);
-
-        // Set description
+        // Set description - more generous but still limited
         if (nft.description) {
-            const description =
-                nft.description.length > 300 ? `${nft.description.substring(0, 300)}...` : nft.description;
+            const description = this.truncateText(nft.description, 200);
             embed.setDescription(description);
         }
 
@@ -228,7 +250,7 @@ export class EmbedGeneratorService {
             const creatorInfo = this.formatCreatorInfo(nft.creator);
             embed.addFields({
                 name: "👤 Creator",
-                value: creatorInfo,
+                value: this.truncateText(creatorInfo, 100), // Keep creator info concise
                 inline: true,
             });
         }
@@ -256,17 +278,13 @@ export class EmbedGeneratorService {
             });
         }
 
-        // Open Edition specific info
+        // Open Edition specific info - keep minimal
         if (nft.saleType === "open_edition" && nft.openEditionInfo) {
             const oeDetails = [];
 
-            // Show number minted (most important info for OE)
+            // Only show minted count and time left (most important)
             if (nft.openEditionInfo.mintedCount !== undefined) {
                 oeDetails.push(`**Minted:** ${nft.openEditionInfo.mintedCount.toLocaleString()}`);
-            }
-
-            if (nft.openEditionInfo.maxPerWallet) {
-                oeDetails.push(`**Max per wallet:** ${nft.openEditionInfo.maxPerWallet}`);
             }
 
             if (nft.openEditionInfo.endTime) {
@@ -277,14 +295,13 @@ export class EmbedGeneratorService {
                 if (timeLeft > 0) {
                     const days = Math.floor(timeLeft / (1000 * 60 * 60 * 24));
                     const hours = Math.floor((timeLeft % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-                    const minutes = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
 
                     let timeString = "";
-                    if (days > 0) timeString += `${days}d `;
-                    if (hours > 0) timeString += `${hours}h `;
-                    if (minutes > 0) timeString += `${minutes}m`;
+                    if (days > 0) timeString = `${days}d`;
+                    else if (hours > 0) timeString = `${hours}h`;
+                    else timeString = "<1h";
 
-                    oeDetails.push(`**Time left:** ${timeString.trim()}`);
+                    oeDetails.push(`**Ends:** ${timeString}`);
                 } else {
                     oeDetails.push(`**Status:** Ended`);
                 }
@@ -292,7 +309,7 @@ export class EmbedGeneratorService {
 
             if (oeDetails.length > 0) {
                 embed.addFields({
-                    name: "🎆 Open Edition Details",
+                    name: "🎆 Open Edition",
                     value: oeDetails.join("\n"),
                     inline: true,
                 });
@@ -320,10 +337,16 @@ export class EmbedGeneratorService {
             inline: true,
         });
 
-        // Attributes (up to 3)
+        // Attributes (limit to 2 for brevity)
         if (nft.attributes && nft.attributes.length > 0) {
-            const attributesToShow = nft.attributes.slice(0, 3);
-            const attributeText = attributesToShow.map((attr) => `**${attr.trait_type}:** ${attr.value}`).join("\n");
+            const attributesToShow = nft.attributes.slice(0, 2);
+            const attributeText = attributesToShow
+                .map((attr) => {
+                    const traitType = this.truncateText(attr.trait_type, 20);
+                    const value = this.truncateText(String(attr.value), 15);
+                    return `**${traitType}:** ${value}`;
+                })
+                .join("\n");
 
             embed.addFields({
                 name: "✨ Attributes",
@@ -331,45 +354,35 @@ export class EmbedGeneratorService {
                 inline: false,
             });
 
-            if (nft.attributes.length > 3) {
+            if (nft.attributes.length > 2) {
                 embed.addFields({
                     name: "\u200B",
-                    value: `*+${nft.attributes.length - 3} more attributes*`,
+                    value: `*+${nft.attributes.length - 2} more*`,
                     inline: false,
                 });
             }
         }
 
-        // Collection info
+        // Collection info - prioritize most useful stats
         if (nft.collection?.name) {
             const collectionDetails = [];
 
-            // Collection type (if available)
-            if (nft.collection.collectionType) {
-                const typeDisplay = nft.collection.collectionType.replace("_", " ").toUpperCase();
-                collectionDetails.push(`**Type:** ${typeDisplay}`);
-            }
-
-            // Floor price (if available)
+            // Only show the most important: floor price and items count
             if (nft.collection.floorPrice !== undefined) {
                 collectionDetails.push(`**Floor:** ${nft.collection.floorPrice} ꜩ`);
             }
 
-            // Items count
             if (nft.collection.items !== undefined) {
                 collectionDetails.push(`**Items:** ${nft.collection.items.toLocaleString()}`);
             }
 
-            // Owners count
-            if (nft.collection.owners !== undefined) {
-                collectionDetails.push(`**Owners:** ${nft.collection.owners.toLocaleString()}`);
+            if (collectionDetails.length > 0) {
+                embed.addFields({
+                    name: `🎨 ${this.truncateText(nft.collection.name, 30)}`,
+                    value: collectionDetails.join(" • "),
+                    inline: false,
+                });
             }
-
-            embed.addFields({
-                name: `🎨 ${nft.collection.name}`,
-                value: collectionDetails.length > 0 ? collectionDetails.join(" • ") : "Collection info",
-                inline: false,
-            });
 
             // Add collection social links if available
             const socialLinks = [];
