@@ -5,8 +5,15 @@
     "main": "dist/index.js",
     "scripts": {
         "build": "tsc",
-        "start": "bun run dist/index.js",
-        "dev": "bun run src/index.ts",
+        "start": "bun run dist/bot.js",
+        "dev": "bun --watch src/bot.ts",
+        "pm2:start": "pm2 start ecosystem.config.js",
+        "pm2:stop": "pm2 stop tezos-bot",
+        "pm2:restart": "pm2 restart tezos-bot",
+        "pm2:delete": "pm2 delete tezos-bot",
+        "pm2:logs": "pm2 logs tezos-bot",
+        "pm2:status": "pm2 status",
+        "deploy": "bun run build && bun run pm2:restart",
         "lint": "eslint src/**/*.ts",
         "lint:fix": "eslint src/**/*.ts --fix",
         "type-check": "tsc --noEmit"
@@ -31,6 +38,7 @@
         "@typescript-eslint/eslint-plugin": "^6.15.0",
         "@typescript-eslint/parser": "^6.15.0",
         "eslint": "^8.56.0",
+        "pm2": "^6.0.13",
         "typescript": "^5.3.3"
     },
     "engines": {
