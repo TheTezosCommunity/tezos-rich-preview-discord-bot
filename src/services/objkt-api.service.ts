@@ -366,6 +366,11 @@ export class ObjktApiService {
                 return await this.getProjectTokensAsCollection(projectId);
             }
 
+            // For bootloader projects, also try to get tokens to build collection data
+            if (platform === "bootloader") {
+                return await this.getProjectTokensAsCollection(projectId);
+            }
+
             // For other platforms, use the original collection query approach
             const query = `
                 query GetCollectionByProject($platform: String!, $projectId: String!) {
