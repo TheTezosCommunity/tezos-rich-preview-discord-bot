@@ -161,6 +161,26 @@ export class EmbedGeneratorService {
             });
         }
 
+        // Artist/Creator information
+        if (collection.verifiedCreators && collection.verifiedCreators.length > 0) {
+            const artistList = collection.verifiedCreators
+                .slice(0, 3) // Limit to 3 artists for brevity
+                .map((address) => this.formatAddress(address))
+                .join(", ");
+
+            const artistLabel = collection.verifiedCreators.length === 1 ? "👤 Artist" : "👥 Artists";
+            const artistValue =
+                collection.verifiedCreators.length > 3
+                    ? `${artistList} +${collection.verifiedCreators.length - 3} more`
+                    : artistList;
+
+            embed.addFields({
+                name: artistLabel,
+                value: this.truncateText(artistValue, 100),
+                inline: true,
+            });
+        }
+
         // Floor price and volume
         const financial = [];
         if (collection.floorPrice !== undefined) {
