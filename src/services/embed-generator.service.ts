@@ -99,13 +99,13 @@ export class EmbedGeneratorService {
         const embed = new EmbedBuilder()
             .setColor(this.colors.error as ColorResolvable)
             .setTitle("❌ Error")
-            .setDescription(message)
+            .setDescription(this.truncateText(message, 300))
             .setTimestamp();
 
         if (details) {
             embed.addFields({
                 name: "Details",
-                value: details,
+                value: this.truncateText(details, 500),
                 inline: false,
             });
         }
@@ -131,9 +131,9 @@ export class EmbedGeneratorService {
         const embed = new EmbedBuilder().setColor(this.colors.tezos as ColorResolvable).setTimestamp();
 
         // Collection name and description
-        embed.setTitle(`🎨 ${collection.name}`);
+        embed.setTitle(`🎨 ${this.truncateText(collection.name, 200)}`);
         if (collection.description) {
-            embed.setDescription(collection.description);
+            embed.setDescription(this.truncateText(collection.description, 150)); // Much shorter for collections
         }
 
         // Collection logo
@@ -217,27 +217,6 @@ export class EmbedGeneratorService {
             value: `\`${collection.contract}\``,
             inline: true,
         });
-
-        // Social links
-        const socialLinks = [];
-        if (collection.website) {
-            const websiteUrl = collection.website.startsWith("http")
-                ? collection.website
-                : `https://${collection.website}`;
-            socialLinks.push(`[🌐 Website](${websiteUrl})`);
-        }
-        if (collection.twitter) {
-            const twitterHandle = collection.twitter.replace(/^@/, "");
-            socialLinks.push(`[🐦 @${twitterHandle}](https://twitter.com/${twitterHandle})`);
-        }
-
-        if (socialLinks.length > 0) {
-            embed.addFields({
-                name: "🔗 Links",
-                value: socialLinks.join(" • "),
-                inline: false,
-            });
-        }
 
         // Set footer
         const iconUrl = this.getMarketplaceIcon(collection.marketplace.name);
