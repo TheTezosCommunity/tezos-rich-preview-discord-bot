@@ -2,7 +2,29 @@
 
 ## Prerequisites
 
--   Bun installed on server
+-   **Bun Runtime**: Install from [bun.sh](https://bun.sh)
+
+    ```bash
+    # Install Bun
+    curl -fsSL https://bun.sh/install | bash
+
+    # Verify installation
+    bun --version
+    ```
+
+-   **PM2 Process Manager**:
+
+    ```bash
+    # With npm
+    npm install -g pm2
+
+    # With bun
+    bun install -g pm2
+
+    # Verify installation
+    pm2 --version
+    ```
+
 -   Discord bot token and client ID
 
 ## Deployment Steps
@@ -32,6 +54,14 @@ Copy `.env.example` to `.env` and configure:
 ```bash
 cp .env.example .env
 # Edit .env with your production values
+```
+
+Find your Bun path and update PM2 config:
+
+```bash
+which bun
+# Copy the output path (e.g., /home/user/.bun/bin/bun)
+# Edit ecosystem.config.cjs and replace interpreter value with your bun path
 ```
 
 ### 4. Build and Deploy
