@@ -2,8 +2,8 @@ module.exports = {
     apps: [
         {
             name: "tezos-bot",
-            script: "dist/bot.js",
-            interpreter: "/usr/local/bin/bun",
+            script: "dist/index.js",
+            interpreter: "bun",
             instances: 1,
             autorestart: true,
             watch: false,
@@ -22,14 +22,11 @@ module.exports = {
             time: true,
             merge_logs: true,
             log_date_format: "YYYY-MM-DD HH:mm:ss Z",
-            // Restart settings
             min_uptime: "10s",
             max_restarts: 10,
-            // Advanced features
             kill_timeout: 5000,
             wait_ready: true,
             listen_timeout: 8000,
-            // Health monitoring
             health_check_grace_period: 3000,
         },
     ],

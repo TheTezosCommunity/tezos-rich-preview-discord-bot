@@ -5,9 +5,10 @@
     "description": "A Discord bot that provides rich NFT previews for Tezos marketplace links",
     "main": "dist/index.js",
     "scripts": {
-        "build": "bun build src/bot.ts --outdir dist --target bun",
-        "start": "bun run dist/bot.js",
-        "dev": "bun --watch src/bot.ts",
+        "build": "bun build src/index.ts --outdir dist --target bun",
+        "start": "bun run dist/index.js",
+        "dev": "bun --watch src/index.ts",
+        "prod": "nodemon dist/index.js --exec bun",
         "pm2:start": "pm2 start ecosystem.config.cjs",
         "pm2:stop": "pm2 stop tezos-bot",
         "pm2:restart": "pm2 restart tezos-bot",
@@ -39,6 +40,7 @@
         "@typescript-eslint/eslint-plugin": "^6.15.0",
         "@typescript-eslint/parser": "^6.15.0",
         "eslint": "^8.56.0",
+        "nodemon": "^3.1.10",
         "pm2": "^6.0.13",
         "typescript": "^5.3.3"
     },
