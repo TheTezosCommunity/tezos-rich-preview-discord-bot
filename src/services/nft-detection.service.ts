@@ -48,6 +48,12 @@ const COLLECTION_PATTERNS = {
             /(?:https?:\/\/)?(?:www\.)?fxhash\.xyz\/project\/([^\/\?]+)(?:\?[^\s]*)?/i, // fxhash.xyz/project/slug
         ],
     },
+    bootloader: {
+        name: "Bootloader",
+        patterns: [
+            /(?:https?:\/\/)?(?:www\.)?bootloader\.art\/generator\/(\d+)(?:\?[^\s]*)?/i, // bootloader.art/generator/id
+        ],
+    },
     editart: {
         name: "EditArt",
         patterns: [
@@ -138,6 +144,8 @@ export class NFTDetectionService {
                         projectId = match[2]; // For collections/path/projects/id format
                     } else if (marketplace === "fxhash") {
                         projectId = match[1];
+                    } else if (marketplace === "bootloader") {
+                        projectId = match[1]; // Bootloader generator URLs have project ID
                     } else if (marketplace === "editart") {
                         contractAddress = match[1]; // EditArt URLs have contract address directly
                     }
