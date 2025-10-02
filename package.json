@@ -1,6 +1,7 @@
 {
     "name": "discord-tezos-previews",
     "version": "1.0.0",
+    "type": "module",
     "description": "A Discord bot that provides rich NFT previews for Tezos marketplace links",
     "main": "dist/index.js",
     "scripts": {

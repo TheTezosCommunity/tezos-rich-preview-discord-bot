@@ -3,7 +3,6 @@
 ## Prerequisites
 
 -   Bun installed on server
--   PM2 installed globally: `npm install -g pm2`
 -   Discord bot token and client ID
 
 ## Deployment Steps
@@ -16,7 +15,17 @@ cd tezos-rich-preview-discord-bot
 bun install
 ```
 
-### 2. Environment Configuration
+### 2. Install PM2
+
+```bash
+# Install PM2 globally
+npm install -g pm2
+
+# Or if you prefer using bun
+bun install -g pm2
+```
+
+### 3. Environment Configuration
 
 Copy `.env.example` to `.env` and configure:
 
@@ -25,7 +34,7 @@ cp .env.example .env
 # Edit .env with your production values
 ```
 
-### 3. Build and Deploy
+### 4. Build and Deploy
 
 ```bash
 # Build the application

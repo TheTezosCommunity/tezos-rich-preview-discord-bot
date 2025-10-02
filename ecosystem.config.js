@@ -3,7 +3,7 @@ module.exports = {
         {
             name: "tezos-bot",
             script: "dist/bot.js",
-            interpreter: "bun",
+            interpreter: "/usr/local/bin/bun",
             instances: 1,
             autorestart: true,
             watch: false,
